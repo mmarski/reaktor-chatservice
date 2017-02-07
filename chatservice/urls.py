@@ -18,4 +18,8 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^$', views.index, name='index'),
+    url(r'^login/$', django.contrib.auth.views.login, name='login', kwargs={'redirect_authenticated_user': True}),
+    url(r'^chatrooms/$', views.chatrooms, name='chatrooms'),
+    url(r'^chatrooms/(\w{1,})/$', views.chat, name='chat'),
 ]
