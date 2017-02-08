@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Welcome to Chat Service!</h1>
+
+<a href={% url 'login' %}>
+  <button type="button" class="btn btn-default">Log in</button>
+</a>
+
+<a href={% url 'register' %}>
+  <button type="button" class="btn btn-default">Register</button>
+</a>
+{% endblock %}

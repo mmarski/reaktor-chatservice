@@ -15,11 +15,15 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
+import django.contrib.auth.views
+from . import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', views.index, name='index'),
-    url(r'^login/$', django.contrib.auth.views.login, name='login', kwargs={'redirect_authenticated_user': True}),
+    url(r'^accounts/login/$', django.contrib.auth.views.login, name='login', kwargs={'redirect_authenticated_user': True, 'template_name': 'accounts/login.html'}),
+    url(r'^accounts/register/', views.register, name="register"),
     url(r'^chatrooms/$', views.chatrooms, name='chatrooms'),
+    url(r'^chatrooms/create/$', views.create_room, name='create_room'),
     url(r'^chatrooms/(\w{1,})/$', views.chat, name='chat'),
 ]

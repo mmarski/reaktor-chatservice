@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Chatting in {{ chatroom.name }}{% endblock %}
+
+{% if alert %}
+<script>
+  alert("{{ alert }}");
+</script>
+{% endif %}
+
+{% block content %}
+<h3>Chatting in {{ chatroom.name }}</h3>
+{% endblock %}
