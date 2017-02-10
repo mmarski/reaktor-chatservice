@@ -17,3 +17,10 @@ class ChatroomForm(forms.ModelForm):
         model = Chatroom # We want to use Chatroom model ...
         # ... and the form should have the following fields
         fields = ('name',)
+
+class ChatMessageForm(forms.ModelForm):
+
+    class Meta:
+        model = ChatMessage # We want to use ChatMessage model ...
+        # ... and the form should have the following fields
+        fields = ('message',)

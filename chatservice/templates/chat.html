@@ -3,10 +3,24 @@
 
 {% if alert %}
 <script>
+$(document).ready(function() {
   alert("{{ alert }}");
+});
 </script>
 {% endif %}
 
 {% block content %}
 <h3>Chatting in {{ chatroom.name }}</h3>
+
+<table id="chatMessages">
+</table>
+
+{% block ChatMessageForm %}
+<form method="POST" action="/chatrooms/{{ chatroom.id }}">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <input type="submit" value="Send">
+</form>
+{% endblock %}
+
 {% endblock %}

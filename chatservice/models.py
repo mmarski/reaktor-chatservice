@@ -13,6 +13,7 @@ class Chatroom(models.Model):
 
 # Model to represent a single chat message from a user in a chatroom
 class ChatMessage(models.Model):
+    message = models.TextField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     chatroom = models.ForeignKey(Chatroom, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
