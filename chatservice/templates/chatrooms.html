@@ -9,7 +9,7 @@
 <div id="user_rooms">
   <h2>Your chatrooms:</h2>
   {% for r in user_rooms %}
-  <a href={% url 'chat' r.id %}>r.name</a>
+  <a href={% url 'chat' r.id %}>{{ r.name }}</a>
   {% endfor %}
 </div>
 {% endif %}
@@ -18,7 +18,7 @@
 <div id="all_rooms">
   <h2>All chatrooms:</h2>
   {% for r in all_rooms %}
-  <a href={% url 'chat' r.id %}>r.name</a>
+  <a href={% url 'chat' r.id %}>{{ r.name }}</a>
   {% endfor %}
 </div>
 {% endif %}

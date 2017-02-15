@@ -12,15 +12,18 @@ $(document).ready(function() {
 {% block content %}
 <h3>Chatting in {{ chatroom.name }}</h3>
 
-<table id="chatMessages">
-</table>
-
 {% block ChatMessageForm %}
-<form method="POST" action="/chatrooms/{{ chatroom.id }}">
+<form method="POST" action="/chatrooms/{{ chatroom.id }}/">
   {% csrf_token %}
   {{ form.as_p }}
   <input type="submit" value="Send">
 </form>
 {% endblock %}
+
+<table id="chatMessages">
+  {% for msg in chatroom_messages %}
+  <tr><td>{{ msg.created }} {{ msg.user.username }}:</td><td>{{ msg.message }}</td></tr>
+  {% endfor %}
+</table>
 
 {% endblock %}

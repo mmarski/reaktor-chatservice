@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django import forms
-from chatservice.models import Chatroom
+from chatservice.models import Chatroom, ChatMessage
 
 class UserForm(forms.ModelForm):
     # use password widget so password isn't shown

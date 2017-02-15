@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import redirect
 from chatservice.models import *
-from chatservice.forms import UserForm, ChatroomForm
+from chatservice.forms import *
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 
@@ -28,15 +28,26 @@ def chatrooms(request):
     user = request.user
     user_rooms = request.user.chatroom_set.all()
     all_rooms = Chatroom.objects.all()
-    return render(request, "chatrooms.html", {'user': user, 'user_rooms': user_rooms, 'all_rooms': all_rooms})
+    return render(request, "chatrooms.html", {'user': user,
+        'user_rooms': user_rooms, 'all_rooms': all_rooms})
 
 @login_required
 def chat(request, room_id):
     user = request.user
     chatroom = Chatroom.objects.get(id=room_id)
+    alert = None
+    if request.method == 'POST':
+        msg_form = ChatMessageForm(data=request.POST)
+        if msg_form.is_valid():
+            msg = msg_form.save(commit=False)
+            msg.user = user
+            msg.chatroom = chatroom
+            msg.save()
+            return redirect('chat', chatroom.id)
+    else:
+        msg_form = ChatMessageForm()
     chatroom_users = chatroom.users.all()
     chatroom_messages = chatroom.chatmessage_set.all()
-    alert = None
     if (user not in chatroom_users):
         chatroom.users.add(user)
         chatroom.save()
@@ -44,7 +55,8 @@ def chat(request, room_id):
         alert = "Joined chat room " + chatroom.name + "!"
     return render(request, "chat.html", {'user': user,
         'chatroom': chatroom, 'chatroom_users': chatroom_users,
-        'chatroom_messages': chatroom_messages, 'alert': alert})
+        'chatroom_messages': chatroom_messages, 'alert': alert,
+        'form': msg_form})
 
 @login_required
 def create_room(request):
