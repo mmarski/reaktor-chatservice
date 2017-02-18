@@ -24,6 +24,10 @@ def register(request):
     return render(request, "accounts/register.html", {'form': user_form})
 
 @login_required
+def profile(request):
+    return render(request, "accounts/profile.html", {})
+
+@login_required
 def chatrooms(request):
     user = request.user
     user_rooms = request.user.chatroom_set.all()

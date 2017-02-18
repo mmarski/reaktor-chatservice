@@ -1,15 +1,14 @@
 {% extends "base.html" %}
 {% block title %}Chatting in {{ chatroom.name }}{% endblock %}
 
-{% if alert %}
+{% block content %}
 <script>
 $(document).ready(function() {
-  alert("{{ alert }}");
+  console.log("Document is ready");
+  alert("moroo");
 });
 </script>
-{% endif %}
 
-{% block content %}
 <h3>Chatting in {{ chatroom.name }}</h3>
 
 {% block ChatMessageForm %}

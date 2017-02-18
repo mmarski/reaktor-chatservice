@@ -2,9 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css" media:"screen">
+    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
     <title>{% block title %}Chat service{% endblock %}</title>
   </head>
-  <body>
+  <body style="padding-top:70px"> 
+    {% include "menu_bar.html" %}
     <div class="container">
       {% block content %}
       {% endblock %}
