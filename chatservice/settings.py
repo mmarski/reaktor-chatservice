@@ -26,8 +26,8 @@ SECRET_KEY = '70)2t4h*%!-x$ta$vg2g7ycddh7ba-e9wk&xfy(cahmfy@#^+7'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 # Heroku: no debug (DYNO is Heroku environment variable)
-if 'DYNO' in os.environ:
-    DEBUG = False
+#if 'DYNO' in os.environ:
+#    DEBUG = False
 
 ALLOWED_HOSTS = []
 
