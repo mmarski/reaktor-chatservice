@@ -27,5 +27,5 @@ urlpatterns = [
     url(r'^accounts/profile/$', views.profile, name="profile"),
     url(r'^chatrooms/$', views.chatrooms, name='chatrooms'),
     url(r'^chatrooms/create/$', views.create_room, name='create_room'),
-    url(r'^chatrooms/(\w{1,})/$', views.chat, name='chat'),
+    url(r'^chatrooms/(\d+)/$', views.chat, name='chat'),
 ]
