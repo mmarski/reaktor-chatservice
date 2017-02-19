@@ -4,25 +4,59 @@
 {% block content %}
 <script>
 $(document).ready(function() {
-  console.log("Document is ready");
-  alert("moroo");
+    $("#messageForm").on("submit", function(event) {
+        event.preventDefault();
+        $.post("/chatrooms/{{ chatroom.id }}/", $("#messageForm").serialize());
+        // Empty form
+        $("#messageForm").val('')
+    });
+    // Map users to their user IDs
+    var users = {}
+    {% for user in chatroom_users %}
+    users["{{ user.id }}"] = "{{ user.username }}";
+    {% endfor %}
+    console.log(users);
+    function messagePoll() {
+        // Get messages every 5 seconds
+        setTimeout(messagePoll, 5000);
+        $.get("/chatrooms/{{ chatroom.id }}/", function(data) {
+            var d = JSON.parse(data);
+            $("#chatMessages tr").remove();
+            for (i = 0; i < d.length; i++) {
+                var fields = d[i]["fields"];
+                msgDate = new Date(fields["created"]);
+                var options = {day: "2-digit",
+                    month: "2-digit", hour: "2-digit",
+                    minute: "2-digit", hour12: "false"}
+                //formattedDate = msgDate.getDate()+"."+msgDate.getMonth()+"."+
+                //    msgDate.getYear()+"-"+msgDate.getHours()+":"+
+                //    msgDate.getMinutes()
+                formattedDate = msgDate.toLocaleTimeString([], options);
+                $("#chatMessages").prepend("<tr><td>"+
+                  formattedDate+" </td>"+
+                  "<td>&lt;"+users[fields["user"]]+"&gt;: </td>"+
+                  "<td>"+fields["message"]+"</td></tr>");
+                console.log(Date.parse(fields["created"]), "vs",
+                    msgDate.getDate())
+            };
+        });
+    };
+    msgjson = "{{ chatroom_messages }}"
+    messagePoll();
 });
 </script>
 
 <h3>Chatting in {{ chatroom.name }}</h3>
 
 {% block ChatMessageForm %}
-<form method="POST" action="/chatrooms/{{ chatroom.id }}/">
+<form id="messageForm" method="POST" action="/chatrooms/{{ chatroom.id }}/">
   {% csrf_token %}
   {{ form.as_p }}
   <input type="submit" value="Send">
 </form>
 {% endblock %}
 
-<table id="chatMessages">
-  {% for msg in chatroom_messages %}
-  <tr><td>{{ msg.created }} {{ msg.user.username }}:</td><td>{{ msg.message }}</td></tr>
-  {% endfor %}
+<table id="chatMessages" style="padding: 10px;">
 </table>
 
 {% endblock %}

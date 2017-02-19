@@ -4,6 +4,9 @@ from chatservice.models import *
 from chatservice.forms import *
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+import json
+from django.core import serializers
+from django.http import HttpResponse
 
 
 def index(request):
@@ -40,18 +43,27 @@ def chat(request, room_id):
     user = request.user
     chatroom = Chatroom.objects.get(id=room_id)
     alert = None
-    if request.method == 'POST':
-        msg_form = ChatMessageForm(data=request.POST)
-        if msg_form.is_valid():
-            msg = msg_form.save(commit=False)
-            msg.user = user
-            msg.chatroom = chatroom
-            msg.save()
+    if request.is_ajax():
+        print("ajax")
+        if request.method == 'POST':
+            print(request.POST['message'])
+            m = ChatMessage.objects.create(message=request.POST['message'],
+                user=user, chatroom=chatroom)
+            print(str(m.created))
             return redirect('chat', chatroom.id)
-    else:
-        msg_form = ChatMessageForm()
+        elif request.method == 'GET':
+            chatroom_messages = chatroom.chatmessage_set.all()
+            serial = serializers.serialize('json', chatroom_messages, fields=(
+                'message', 'user', 'created'))
+            msgjson = json.dumps(serial)
+            return HttpResponse(msgjson, content_type="application/json")
+        return
+    msg_form = ChatMessageForm()
     chatroom_users = chatroom.users.all()
     chatroom_messages = chatroom.chatmessage_set.all()
+    serial = serializers.serialize('json', chatroom_messages, fields=(
+        'message', 'user', 'created'))
+    msgjson = json.dumps(serial)
     if (user not in chatroom_users):
         chatroom.users.add(user)
         chatroom.save()
@@ -59,7 +71,7 @@ def chat(request, room_id):
         alert = "Joined chat room " + chatroom.name + "!"
     return render(request, "chat.html", {'user': user,
         'chatroom': chatroom, 'chatroom_users': chatroom_users,
-        'chatroom_messages': chatroom_messages, 'alert': alert,
+        'chatroom_messages': msgjson, 'alert': alert,
         'form': msg_form})
 
 @login_required

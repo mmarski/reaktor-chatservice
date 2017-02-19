@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core import serializers
 
 # Extra data model for a user, to store user nickname
 class Extra(models.Model):
