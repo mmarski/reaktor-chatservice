@@ -1,0 +1,9 @@
+# !/usr/bin/env bash
+# File path should be ./bin/post_compile
+# https://discussion.heroku.com/t/django-automaticlly-run-syncdb-and-migrations-after-heroku-deploy-with-a-buildpack-or-otherwise/466/7
+
+echo "=> Performing database migrations..."
+python manage.py makemigrations
+python manage.py makemigrations chatservice
+python manage.py migrate
+python manage.py migrate chatservice
