@@ -29,7 +29,8 @@ DEBUG = True
 #if 'DYNO' in os.environ:
 #    DEBUG = False
 
-ALLOWED_HOSTS = []
+# Allow all host headers
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
