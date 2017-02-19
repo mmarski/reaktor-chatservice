@@ -11,6 +11,8 @@ from django.http import HttpResponse
 
 
 def index(request):
+    if request.user.is_authenticated:
+        return redirect('chatrooms')
     return render(request, "index.html", {})
 
 def register(request):
