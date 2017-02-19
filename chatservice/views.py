@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404
 from chatservice.models import *
 from chatservice.forms import *
 from django.contrib.auth import authenticate, login
@@ -66,13 +67,15 @@ def chatrooms(request):
 @login_required
 def chat(request, room_id):
     user = request.user
-    chatroom = Chatroom.objects.get(id=room_id)
+    chatroom = get_object_or_404(Chatroom, id=room_id)
     if request.is_ajax():
+        # User sent a message
         if request.method == 'POST':
             print(request.POST['message'])
             ChatMessage.objects.create(message=request.POST['message'],
                 user=user, chatroom=chatroom)
             return redirect('chat', chatroom.id)
+        # GET request for new messages
         elif request.method == 'GET':
             chatroom_messages = chatroom.chatmessage_set.all()
             serial = serializers.serialize('json', chatroom_messages, fields=(
@@ -83,6 +86,7 @@ def chat(request, room_id):
     msg_form = ChatMessageForm()
     chatroom_users = chatroom.users.all()
     chatroom_messages = chatroom.chatmessage_set.all()
+    # This serialized message set is not used
     serial = serializers.serialize('json', chatroom_messages, fields=(
         'message', 'user', 'created'))
     msgjson = json.dumps(serial)
