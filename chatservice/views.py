@@ -4,6 +4,7 @@ from chatservice.models import *
 from chatservice.forms import *
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 import json
 from django.core import serializers
 from django.http import HttpResponse
@@ -21,14 +22,34 @@ def register(request):
             user = user_form.save()
             user.set_password(user.password)
             user.save()
+            messages.success(request,
+                "Account created successfully! Please log in.")
             return redirect('chatrooms')
+        else:
+            messages.error(request,
+                "Invalid input. Your chosen username may be in use.")
+            return redirect('register')
     else:
         user_form = UserForm()
     return render(request, "accounts/register.html", {'form': user_form})
 
 @login_required
 def profile(request):
-    return render(request, "accounts/profile.html", {})
+    if request.method == 'POST':
+        name_edit_form = EditUsernameForm(data=request.POST,
+            instance=request.user)
+        if name_edit_form.is_valid():
+            user = name_edit_form.save()
+            user.save()
+            messages.success(request, "Username changed successfully!")
+        else:
+            messages.error(request,
+                "Could not modify username. You must choose a unique name.")
+        return redirect('profile')
+    else:
+        name_edit_form = EditUsernameForm(instance=request.user)
+    return render(request, "accounts/profile.html", {'user': request.user,
+        'form': name_edit_form})
 
 @login_required
 def chatrooms(request):
@@ -42,14 +63,11 @@ def chatrooms(request):
 def chat(request, room_id):
     user = request.user
     chatroom = Chatroom.objects.get(id=room_id)
-    alert = None
     if request.is_ajax():
-        print("ajax")
         if request.method == 'POST':
             print(request.POST['message'])
-            m = ChatMessage.objects.create(message=request.POST['message'],
+            ChatMessage.objects.create(message=request.POST['message'],
                 user=user, chatroom=chatroom)
-            print(str(m.created))
             return redirect('chat', chatroom.id)
         elif request.method == 'GET':
             chatroom_messages = chatroom.chatmessage_set.all()
@@ -68,11 +86,10 @@ def chat(request, room_id):
         chatroom.users.add(user)
         chatroom.save()
         chatroom_users = chatroom.users.all()
-        alert = "Joined chat room " + chatroom.name + "!"
+        messages.success(request, "Joined chat room " + chatroom.name + "!")
     return render(request, "chat.html", {'user': user,
         'chatroom': chatroom, 'chatroom_users': chatroom_users,
-        'chatroom_messages': msgjson, 'alert': alert,
-        'form': msg_form})
+        'chatroom_messages': msgjson, 'form': msg_form})
 
 @login_required
 def create_room(request):

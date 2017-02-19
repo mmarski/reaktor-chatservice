@@ -1,5 +1,16 @@
 {% extends "base.html" %}
 {% block title %}Chat service profile{% endblock %}
 {% block content %}
-hallo, not implemented
+<h2>Hello {{ user.username }}!</h2>
+<br>
+<h4>Edit username</h4>
+
+{% block EditUsernameForm %}
+<form method="POST" action="/accounts/profile/">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <input type="submit" value="Edit username">
+</form>
+{% endblock %}
+
 {% endblock %}

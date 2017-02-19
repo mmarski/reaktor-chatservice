@@ -4,26 +4,31 @@
 {% block content %}
 <script>
 $(document).ready(function() {
+    // Submit chat message
     $("#messageForm").on("submit", function(event) {
         event.preventDefault();
+        // Ajax POST request
         $.post("/chatrooms/{{ chatroom.id }}/", $("#messageForm").serialize());
         // Empty form
-        $("#messageForm").val('')
+        $("#messageForm")[0].reset()
     });
     // Map users to their user IDs
     var users = {}
     {% for user in chatroom_users %}
     users["{{ user.id }}"] = "{{ user.username }}";
     {% endfor %}
-    console.log(users);
+
     function messagePoll() {
         // Get messages every 5 seconds
         setTimeout(messagePoll, 5000);
+        // Ajax request to get messages
         $.get("/chatrooms/{{ chatroom.id }}/", function(data) {
             var d = JSON.parse(data);
+            // Empty message table
             $("#chatMessages tr").remove();
             for (i = 0; i < d.length; i++) {
                 var fields = d[i]["fields"];
+                // Format date (doesn't fully work as intended)
                 msgDate = new Date(fields["created"]);
                 var options = {day: "2-digit",
                     month: "2-digit", hour: "2-digit",
@@ -32,16 +37,14 @@ $(document).ready(function() {
                 //    msgDate.getYear()+"-"+msgDate.getHours()+":"+
                 //    msgDate.getMinutes()
                 formattedDate = msgDate.toLocaleTimeString([], options);
+                // Messages to table latest first
                 $("#chatMessages").prepend("<tr><td>"+
                   formattedDate+" </td>"+
                   "<td>&lt;"+users[fields["user"]]+"&gt;: </td>"+
                   "<td>"+fields["message"]+"</td></tr>");
-                console.log(Date.parse(fields["created"]), "vs",
-                    msgDate.getDate())
             };
         });
     };
-    msgjson = "{{ chatroom_messages }}"
     messagePoll();
 });
 </script>

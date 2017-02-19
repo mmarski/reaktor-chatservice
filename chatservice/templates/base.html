@@ -6,9 +6,38 @@
     <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css" media:"screen">
     <script src="/static/bootstrap/js/bootstrap.min.js"></script>
     <title>{% block title %}Chat service{% endblock %}</title>
+
+    <script>
+      // Django messages
+      $(document).ready(function() {
+          // Messages timeout 10 sec
+          setTimeout(function() {
+              $('.alert').fadeOut('slow');
+          }, 10000); // Time in milliseconds
+
+          // Delete message
+          $('.del-msg').on('click', function() {
+              $('.del-msg').parent().fadeOut('slow');
+          });
+      });
+    </script>
   </head>
+
   <body style="padding-top:70px"> 
     {% include "menu_bar.html" %}
+
+    {% if messages %}
+    <ul>
+      {% for message in messages %}
+      <li{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Error: {% endif %}
+        {{ message }}
+        <a href="#" class="del-msg">&times;</a>
+      </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
     <div class="container">
       {% block content %}
       {% endblock %}
